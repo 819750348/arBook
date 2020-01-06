@@ -12,7 +12,8 @@ const user = {
     welcome: '',
     avatar: '',
     permissionList: [],
-    info: {}
+    info: {},
+    registerSuccessUserName: ''
   },
 
   mutations: {
@@ -33,6 +34,9 @@ const user = {
     SET_INFO: (state, info) => {
       state.info = info
     },
+    setRegisterSuccessUserName:(state ,values ) =>{
+      state.registerSuccessUserName = values
+    }
   },
 
   actions: {

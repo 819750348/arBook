@@ -6,7 +6,6 @@
         :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
         @change="handleTabClick">
         <a-tab-pane key="tab1" tab="账号密码登陆">
-
           <a-form-item>
             <a-input
               size="large"
@@ -47,48 +46,13 @@
             </a-col>
           </a-row>
         </a-tab-pane>
-        <!-- <a-tab-pane key="tab2" tab="手机号登陆">
-          <a-form-item>
-            <a-input
-              v-decorator="['mobile',validatorRules.mobile]"
-              size="large"
-              type="text"
-              placeholder="手机号">
-              <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-            </a-input>
-          </a-form-item>
-
-          <a-row :gutter="16">
-            <a-col class="gutter-row" :span="16">
-              <a-form-item>
-                <a-input
-                  v-decorator="['captcha',validatorRules.captcha]"
-                  size="large"
-                  type="text"
-                  placeholder="请输入验证码">
-                  <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>
-                </a-input>
-              </a-form-item>
-            </a-col>
-            <a-col class="gutter-row" :span="8">
-              <a-button
-                class="getCaptcha"
-                tabindex="-1"
-                :disabled="state.smsSendBtn"
-                @click.stop.prevent="getCaptcha"
-                v-text="!state.smsSendBtn && '获取验证码' || (state.time+' s')"></a-button>
-            </a-col>
-          </a-row>
-        </a-tab-pane> -->
       </a-tabs>
-
       <a-form-item>
         <a-checkbox v-model="formLogin.rememberMe">自动登陆</a-checkbox>
-        <!-- <router-link :to="{ name: 'recover', params: { user: 'aaa'} }" class="forge-password" style="float: right;">
-          忘记密码
-        </router-link> -->
+        <router-link :to="{ name: 'register', params: { user: ''} }" class="forge-password" style="float: right;">
+          没有账号？立即注册
+        </router-link>
       </a-form-item>
-
       <a-form-item style="margin-top:24px">
         <a-button
           size="large"
@@ -100,63 +64,7 @@
           :disabled="loginBtn">确定
         </a-button>
       </a-form-item>
-
-      <!-- <div class="user-login-other">
-        <span>其他登陆方式</span>
-        <a><a-icon class="item-icon" type="alipay-circle"></a-icon></a>
-        <a><a-icon class="item-icon" type="taobao-circle"></a-icon></a>
-        <a><a-icon class="item-icon" type="weibo-circle"></a-icon></a>
-        <router-link class="register" :to="{ name: 'register' }">
-          注册账户
-        </router-link>
-      </div>-->
     </a-form>
-
-    <two-step-captcha
-      v-if="requiredTwoStepCaptcha"
-      :visible="stepCaptchaVisible"
-      @success="stepCaptchaSuccess"
-      @cancel="stepCaptchaCancel"></two-step-captcha>
-
-    <a-modal
-      title="登录部门选择"
-      :width="450"
-      :visible="departVisible"
-      :closable="false"
-      :maskClosable="false">
-
-      <template slot="footer">
-        <a-button type="primary" @click="departOk">确认</a-button>
-      </template>
-
-      <a-form>
-        <a-form-item
-          :labelCol="{span:4}"
-          :wrapperCol="{span:20}"
-          style="margin-bottom:10px"
-          :validate-status="validate_status">
-          <a-tooltip placement="topLeft" >
-            <template slot="title">
-              <span>您隶属于多部门，请选择登录部门</span>
-            </template>
-            <a-avatar style="backgroundColor:#87d068" icon="gold" />
-          </a-tooltip>
-          <a-select @change="departChange" :class="{'valid-error':validate_status=='error'}" placeholder="请选择登录部门" style="margin-left:10px;width: 80%">
-            <a-icon slot="suffixIcon" type="gold" />
-            <a-select-option
-              v-for="d in departList"
-              :key="d.id"
-              :value="d.orgCode">
-              {{ d.departName }}
-            </a-select-option>
-          </a-select>
-        </a-form-item>
-      </a-form>
-
-
-
-    </a-modal>
-
   </div>
 </template>
 
@@ -267,9 +175,8 @@
               }).catch((err) => {
                 that.requestFailed(err);
               });
-            }y
+            }
           })
-          // 使用手机号登陆
         } else {
           that.form.validateFields([ 'mobile', 'captcha' ], { force: true }, (err, values) => {
             if (!err) {
@@ -379,27 +286,27 @@
         }
       },
       departConfirm(res){
-        if(res.success){
-          let multi_depart = res.result.multi_depart
-          //0:无部门 1:一个部门 2:多个部门
-          if(multi_depart==0){
+        // if(res.success){
+          // let multi_depart = res.result.multi_depart
+          // //0:无部门 1:一个部门 2:多个部门
+          // if(multi_depart==0){
+          //   this.loginSuccess()
+          //   this.$notification.warn({
+          //     message: '提示',
+          //     description: `您尚未归属部门,请确认账号信息`,
+          //     duration:3
+          //   });
+          // }else if(multi_depart==2){
+          //   this.departVisible=true
+          //   this.currentUsername=this.form.getFieldValue("username")
+          //   this.departList = res.result.departs
+          // }else {
             this.loginSuccess()
-            this.$notification.warn({
-              message: '提示',
-              description: `您尚未归属部门,请确认账号信息`,
-              duration:3
-            });
-          }else if(multi_depart==2){
-            this.departVisible=true
-            this.currentUsername=this.form.getFieldValue("username")
-            this.departList = res.result.departs
-          }else {
-            this.loginSuccess()
-          }
-        }else{
-          this.requestFailed(res)
-          this.Logout();
-        }
+          // }
+        // }else{
+        //   this.requestFailed(res)
+        //   this.Logout();
+        // }
       },
       departOk(){
         if(!this.departSelected){
@@ -451,6 +358,7 @@
     }
 
     .forge-password {
+      color: white;
       font-size: 14px;
     }
 
@@ -489,5 +397,9 @@
 <style>
   .valid-error .ant-select-selection__placeholder{
     color: #f5222d;
+  }
+  .ant-tabs-nav .ant-tabs-tab-active {
+    color: #f5f5f5;
+    font-weight: 500;
   }
 </style>
